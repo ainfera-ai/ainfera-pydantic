@@ -20,7 +20,6 @@ from ainfera_pydantic import (
 )
 from ainfera_pydantic._model import _resolve_config
 
-
 # ── _resolve_config (the family contract) ────────────────────────
 
 
@@ -71,9 +70,7 @@ def test_ainfera_provider_passes_base_url_and_key(
 ) -> None:
     monkeypatch.setenv("AINFERA_API_KEY", "ai_infera_test")
     fake_provider = MagicMock(name="OpenAIProvider")
-    with patch(
-        "pydantic_ai.providers.openai.OpenAIProvider", return_value=fake_provider
-    ) as ctor:
+    with patch("pydantic_ai.providers.openai.OpenAIProvider", return_value=fake_provider) as ctor:
         provider = ainfera_provider()
     assert provider is fake_provider
     _, kwargs = ctor.call_args
@@ -88,12 +85,8 @@ def test_ainfera_model_wires_provider_into_chat_model(
     fake_provider = MagicMock(name="OpenAIProvider")
     fake_model = MagicMock(name="OpenAIChatModel")
     with (
-        patch(
-            "pydantic_ai.providers.openai.OpenAIProvider", return_value=fake_provider
-        ),
-        patch(
-            "pydantic_ai.models.openai.OpenAIChatModel", return_value=fake_model
-        ) as model_ctor,
+        patch("pydantic_ai.providers.openai.OpenAIProvider", return_value=fake_provider),
+        patch("pydantic_ai.models.openai.OpenAIChatModel", return_value=fake_model) as model_ctor,
     ):
         model = ainfera_model()
     assert model is fake_model
@@ -108,9 +101,7 @@ def test_ainfera_model_uses_explicit_model_override(
     monkeypatch.setenv("AINFERA_API_KEY", "ai_infera_test")
     with (
         patch("pydantic_ai.providers.openai.OpenAIProvider", return_value=MagicMock()),
-        patch(
-            "pydantic_ai.models.openai.OpenAIChatModel", return_value=MagicMock()
-        ) as model_ctor,
+        patch("pydantic_ai.models.openai.OpenAIChatModel", return_value=MagicMock()) as model_ctor,
     ):
         ainfera_model(model="claude-opus-4-7")
     args, _ = model_ctor.call_args
@@ -124,9 +115,7 @@ def test_ainfera_model_forwards_extra_kwargs(
     monkeypatch.setenv("AINFERA_API_KEY", "ai_infera_test")
     with (
         patch("pydantic_ai.providers.openai.OpenAIProvider", return_value=MagicMock()),
-        patch(
-            "pydantic_ai.models.openai.OpenAIChatModel", return_value=MagicMock()
-        ) as model_ctor,
+        patch("pydantic_ai.models.openai.OpenAIChatModel", return_value=MagicMock()) as model_ctor,
     ):
         ainfera_model(settings={"temperature": 0.0})
     _, kwargs = model_ctor.call_args

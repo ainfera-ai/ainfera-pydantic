@@ -51,8 +51,8 @@ def _resolve_config(
 
     Fail-CLOSED on missing key; fail-CLOSED on a non-`ainfera_*`
     prefix (defense against an `sk-*` key silently bypassing the
-    Ainfera gateway + the §16 capture). AIN-368: legacy `ai_infera_*`
-    keys are still accepted during the dual-accept window.
+    Ainfera gateway + the §16 capture). AIN-368 P3: only `ainfera_*` is
+    accepted; the legacy `ai_infera_*` prefix is now rejected.
     """
     resolved_key = api_key or os.environ.get("AINFERA_API_KEY", "")
     if not resolved_key:
@@ -61,7 +61,7 @@ def _resolve_config(
             "explicit api_key= argument. Get a key at "
             "https://app.ainfera.ai/signup; it starts with `ainfera_`."
         )
-    if not resolved_key.startswith(("ainfera_", "ai_infera_")):
+    if not resolved_key.startswith("ainfera_"):
         raise ValueError(
             "AINFERA_API_KEY value does not start with `ainfera_`. "
             "If you intend to call OpenAI directly, use Pydantic AI's "

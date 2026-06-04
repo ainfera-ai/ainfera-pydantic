@@ -62,14 +62,15 @@ def test_resolve_raises_on_non_ainfera_key_prefix(
     assert "ainfera_" in str(exc_info.value)
 
 
-def test_resolve_accepts_legacy_ai_infera_prefix_during_dual_accept(
+def test_resolve_rejects_legacy_ai_infera_prefix_after_legacy_off(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    """AIN-368 P1: legacy `ai_infera_*` keys still resolve while the fleet
-    is re-minted. Dropped in P3 (legacy-off)."""
+    """AIN-368 P3 (legacy-off): the legacy `ai_infera_*` prefix is no longer
+    accepted — the fleet was re-minted to `ainfera_*`."""
     monkeypatch.setenv("AINFERA_API_KEY", "ai_infera_legacy_key")
-    cfg = _resolve_config()
-    assert cfg.api_key == "ai_infera_legacy_key"
+    with pytest.raises(ValueError) as exc_info:
+        _resolve_config()
+    assert "ainfera_" in str(exc_info.value)
 
 
 # ── Pydantic AI wiring (mocked; no live calls) ───────────────────

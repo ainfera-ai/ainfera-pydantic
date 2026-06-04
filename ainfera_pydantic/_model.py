@@ -11,7 +11,7 @@ The construction shape (verified against the current Pydantic AI docs):
 
 This module's `ainfera_model(...)` / `ainfera_provider(...)` build
 the same shape with Ainfera's defaults — `AINFERA_API_URL` + an
-`ai_infera_*` key + the routing-engine canonical model. Shares the
+`ainfera_*` key + the routing-engine canonical model. Shares the
 family contract with `ainfera-microsoft-agent-framework`,
 `ainfera-langchain`, `ainfera-crewai`, etc.
 """
@@ -49,20 +49,21 @@ def _resolve_config(
 
     Precedence per arg: explicit > env var > default.
 
-    Fail-CLOSED on missing key; fail-CLOSED on a non-`ai_infera_*`
+    Fail-CLOSED on missing key; fail-CLOSED on a non-`ainfera_*`
     prefix (defense against an `sk-*` key silently bypassing the
-    Ainfera gateway + the §16 capture).
+    Ainfera gateway + the §16 capture). AIN-368: legacy `ai_infera_*`
+    keys are still accepted during the dual-accept window.
     """
     resolved_key = api_key or os.environ.get("AINFERA_API_KEY", "")
     if not resolved_key:
         raise ValueError(
             "ainfera_model requires AINFERA_API_KEY (env var) or an "
             "explicit api_key= argument. Get a key at "
-            "https://app.ainfera.ai/signup; it starts with `ai_infera_`."
+            "https://app.ainfera.ai/signup; it starts with `ainfera_`."
         )
-    if not resolved_key.startswith("ai_infera_"):
+    if not resolved_key.startswith(("ainfera_", "ai_infera_")):
         raise ValueError(
-            "AINFERA_API_KEY value does not start with `ai_infera_`. "
+            "AINFERA_API_KEY value does not start with `ainfera_`. "
             "If you intend to call OpenAI directly, use Pydantic AI's "
             "OpenAIProvider with the OpenAI key directly — this package's "
             "contract is Ainfera routing (which would silently get "

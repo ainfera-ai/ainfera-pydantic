@@ -7,7 +7,7 @@ Routing that through Ainfera means: typed agent outputs + signed audit
 
 ## The two env vars
 
-  AINFERA_API_KEY   — your `ai_infera_*` key from app.ainfera.ai/signup
+  AINFERA_API_KEY   — your `ainfera_*` key from app.ainfera.ai/signup
   AINFERA_API_URL   — defaults to https://api.ainfera.ai/v1 (override for staging)
 
 ## Usage (minimal — typed result)

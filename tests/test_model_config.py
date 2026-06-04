@@ -25,23 +25,23 @@ from ainfera_pydantic._model import _resolve_config
 
 
 def test_resolve_uses_explicit_args_first(monkeypatch: pytest.MonkeyPatch) -> None:
-    monkeypatch.setenv("AINFERA_API_KEY", "ai_infera_envkey")
+    monkeypatch.setenv("AINFERA_API_KEY", "ainfera_envkey")
     monkeypatch.setenv("AINFERA_API_URL", "https://env.example/v1")
     cfg = _resolve_config(
-        api_key="ai_infera_explicit",
+        api_key="ainfera_explicit",
         base_url="https://explicit.example/v1",
         model="claude-opus-4-7",
     )
-    assert cfg.api_key == "ai_infera_explicit"
+    assert cfg.api_key == "ainfera_explicit"
     assert cfg.base_url == "https://explicit.example/v1"
     assert cfg.model == "claude-opus-4-7"
 
 
 def test_resolve_falls_back_to_env_then_default(monkeypatch: pytest.MonkeyPatch) -> None:
-    monkeypatch.setenv("AINFERA_API_KEY", "ai_infera_envkey")
+    monkeypatch.setenv("AINFERA_API_KEY", "ainfera_envkey")
     monkeypatch.delenv("AINFERA_API_URL", raising=False)
     cfg = _resolve_config()
-    assert cfg.api_key == "ai_infera_envkey"
+    assert cfg.api_key == "ainfera_envkey"
     assert cfg.base_url == DEFAULT_BASE_URL == "https://api.ainfera.ai/v1"
     assert cfg.model == DEFAULT_MODEL == "ainfera-inference"
 
@@ -60,7 +60,17 @@ def test_resolve_raises_on_non_ainfera_key_prefix(
     monkeypatch.setenv("AINFERA_API_KEY", "sk-1234567890abcdef")
     with pytest.raises(ValueError) as exc_info:
         _resolve_config()
-    assert "ai_infera_" in str(exc_info.value)
+    assert "ainfera_" in str(exc_info.value)
+
+
+def test_resolve_accepts_legacy_ai_infera_prefix_during_dual_accept(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """AIN-368 P1: legacy `ai_infera_*` keys still resolve while the fleet
+    is re-minted. Dropped in P3 (legacy-off)."""
+    monkeypatch.setenv("AINFERA_API_KEY", "ai_infera_legacy_key")
+    cfg = _resolve_config()
+    assert cfg.api_key == "ai_infera_legacy_key"
 
 
 # ── Pydantic AI wiring (mocked; no live calls) ───────────────────
@@ -69,7 +79,7 @@ def test_resolve_raises_on_non_ainfera_key_prefix(
 def test_ainfera_provider_passes_base_url_and_key(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    monkeypatch.setenv("AINFERA_API_KEY", "ai_infera_test")
+    monkeypatch.setenv("AINFERA_API_KEY", "ainfera_test")
     fake_provider = MagicMock(name="OpenAIProvider")
     with patch(
         "pydantic_ai.providers.openai.OpenAIProvider", return_value=fake_provider
@@ -78,13 +88,13 @@ def test_ainfera_provider_passes_base_url_and_key(
     assert provider is fake_provider
     _, kwargs = ctor.call_args
     assert kwargs["base_url"] == DEFAULT_BASE_URL
-    assert kwargs["api_key"] == "ai_infera_test"
+    assert kwargs["api_key"] == "ainfera_test"
 
 
 def test_ainfera_model_wires_provider_into_chat_model(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    monkeypatch.setenv("AINFERA_API_KEY", "ai_infera_test")
+    monkeypatch.setenv("AINFERA_API_KEY", "ainfera_test")
     fake_provider = MagicMock(name="OpenAIProvider")
     fake_model = MagicMock(name="OpenAIChatModel")
     with (
@@ -105,7 +115,7 @@ def test_ainfera_model_wires_provider_into_chat_model(
 def test_ainfera_model_uses_explicit_model_override(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    monkeypatch.setenv("AINFERA_API_KEY", "ai_infera_test")
+    monkeypatch.setenv("AINFERA_API_KEY", "ainfera_test")
     with (
         patch("pydantic_ai.providers.openai.OpenAIProvider", return_value=MagicMock()),
         patch(
@@ -121,7 +131,7 @@ def test_ainfera_model_forwards_extra_kwargs(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     """Caller-supplied Pydantic AI model kwargs pass through verbatim."""
-    monkeypatch.setenv("AINFERA_API_KEY", "ai_infera_test")
+    monkeypatch.setenv("AINFERA_API_KEY", "ainfera_test")
     with (
         patch("pydantic_ai.providers.openai.OpenAIProvider", return_value=MagicMock()),
         patch(

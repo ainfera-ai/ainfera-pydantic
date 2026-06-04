@@ -1,7 +1,7 @@
 """Minimal Pydantic AI agent with a typed result, routed through Ainfera.
 
 Run:
-    export AINFERA_API_KEY=ai_infera_...
+    export AINFERA_API_KEY=ainfera_...
     pip install ainfera-pydantic
     python examples/typed_city.py
 """

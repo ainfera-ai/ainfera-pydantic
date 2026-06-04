@@ -11,7 +11,7 @@ pip install ainfera-pydantic
 ## Quickstart (typed result through Ainfera)
 
 ```bash
-export AINFERA_API_KEY=ai_infera_...  # https://app.ainfera.ai/signup
+export AINFERA_API_KEY=ainfera_...  # https://app.ainfera.ai/signup
 ```
 
 ```python
@@ -57,7 +57,7 @@ Live catalog: `GET https://api.ainfera.ai/v1/models`.
 
 | Env var | Default | Required |
 |---|---|---|
-| `AINFERA_API_KEY` | (none) | **Yes** — must start with `ai_infera_` |
+| `AINFERA_API_KEY` | (none) | **Yes** — must start with `ainfera_` |
 | `AINFERA_API_URL` | `https://api.ainfera.ai/v1` | No |
 
 You can also pass `api_key=`, `base_url=`, `model=` directly to `ainfera_model(...)`. Explicit args win.

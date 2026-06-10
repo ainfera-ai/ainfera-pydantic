@@ -38,6 +38,12 @@ async def main() -> None:
 asyncio.run(main())
 ```
 
+Or with `curl` only (no install needed):
+
+```bash
+./curl-example.sh
+```
+
 That's the whole story. Pydantic AI's typed-output discipline + Ainfera's routing engine + a signed receipt per turn.
 
 ## Model choice

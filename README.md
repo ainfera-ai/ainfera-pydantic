@@ -4,8 +4,12 @@
 
 ## Install
 
+This adapter ships as a package (`pyproject.toml`); install it from a clone:
+
 ```bash
-pip install ainfera-pydantic
+git clone https://github.com/ainfera-ai/ainfera-pydantic
+cd ainfera-pydantic
+pip install -e .            # or: uv pip install -e .
 ```
 
 ## Quickstart (typed result through Ainfera)
